@@ -23,7 +23,7 @@ library(Hmisc)
 library(tidyr)
 
 # Load dataset
-setwd("C:\\Users\\17046\\OneDrive\\Documents\\LearnPlatform\\Analysis\\Data\\Customer Health Score\\Feature Selection")
+setwd("C:\\Users\\Data\\Customer Health Score\\Feature Selection")
 
 cust_health <- read.csv("customer_health.csv",
                         stringsAsFactors = FALSE,
@@ -41,7 +41,7 @@ str(cust_health)
 cols <- c("LP_Org_ID__c","FiscalYear","FiscalQuarter", "renewal_outcome", "org_id")
 cust_health[cols] <- lapply(cust_health[cols], factor)
 
-  # Check 
+  # Check that the variable types are correct
 str(cust_health)
 
 # Check how many columns have unique values 
@@ -197,25 +197,23 @@ write.csv(corr_all, "C:\\Users\\17046\\OneDrive\\Documents\\LearnPlatform\\Analy
 
 # Print the remaining correlation sheets and add them to one file 
 
-write.csv(corr_feedback, "C:\\Users\\17046\\OneDrive\\Documents\\LearnPlatform\\Analysis\\Data\\Customer Health Score\\Feature Selection\\corr_feedback.csv")
-write.csv(corr_impact, "C:\\Users\\17046\\OneDrive\\Documents\\LearnPlatform\\Analysis\\Data\\Customer Health Score\\Feature Selection\\corr_impact.csv")
-write.csv(corr_pm, "C:\\Users\\17046\\OneDrive\\Documents\\LearnPlatform\\Analysis\\Data\\Customer Health Score\\Feature Selection\\corr_pm.csv")
-write.csv(corr_rw, "C:\\Users\\17046\\OneDrive\\Documents\\LearnPlatform\\Analysis\\Data\\Customer Health Score\\Feature Selection\\corr_rw.csv")
-
+write.csv(corr_feedback, "C:\\Users\\Data\\Customer Health Score\\Feature Selection\\corr_feedback.csv")
+write.csv(corr_impact, "C:\\Users\\Data\\Customer Health Score\\Feature Selection\\corr_impact.csv")
+write.csv(corr_pm, "C:\\Users\\Data\\Customer Health Score\\Feature Selection\\corr_pm.csv")
+write.csv(corr_rw, "C:\\Users\\Data\\Customer Health Score\\Feature Selection\\corr_rw.csv")
 
 ###################### Feature Importance ######################
 # Repeatable results by setting seed
 set.seed(7)
 str(cust_health)
 
-# # See what's wrong w factor levels
+# Check factor levels to ensure they are even and don't contain any NA and majority O's
 # counts <- cust_health %>%
 #   lapply(table) %>%
 #   lapply(as.data.frame)
 # counts
 
 # Rename dataset from before to prepare training set-up
-
 features <- subset(cust_health, select = -c(LP_Org_ID__c,org_id, NCES_ID__c, Name, Name.Opportunity., time_to_renewal,
                                              LastModifiedDate.Opportunity., Fiscal, StageName, time, org_name, Type.Opportunity.))
 features <- features %>%
@@ -271,10 +269,9 @@ NA_preproc <- function (dat) {
   dat
 }
 
+# Final dataset after preprocessing NA's                 
 test <- NA_preproc(featuresNew)
 
-  # Make renewal_outcome a factor (this is our target)
-# features$renewal_outcome <- as.factor(features$renewal_outcome)
 # Use one hot encoding to create dummy variables for each value of the category
 test.OHE <- model.matrix(~.-1, data = test)
 str(test.OHE)
